@@ -1,0 +1,4 @@
+*.log
+install.lock
+config.php
+test.php
