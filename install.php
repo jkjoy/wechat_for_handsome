@@ -1,19 +1,19 @@
 <?php
-if(file_exists(__DIR__.'/install.lock')){
+if (file_exists(__DIR__ . '/install.lock')) {
     die("已经安装过了，如要重新安装请删除install.lock");
 }
-if ($_SERVER['REQUEST_METHOD'] == 'POST' ){
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $host = $_POST['host'];
     $port = $_POST['port'];
     $dbuser = $_POST['dbuser'];
     $dbpass = $_POST['dbpass'];
     $dbname = $_POST['dbname'];
-    $app_id=$_POST['app_id'];
-    $secret=$_POST['secret'];
-    $token=$_POST['token'];
-    $aes_key=$_POST['aes_key'];
-    $url_dir=$_POST['url_dir'];
-    $config="<?php
+    $app_id = $_POST['app_id'];
+    $secret = $_POST['secret'];
+    $token = $_POST['token'];
+    $aes_key = $_POST['aes_key'];
+    $url_dir = $_POST['url_dir'];
+    $config = "<?php
 \$mysql_conf = array(
     'host'    => '$host:$port', 
     'db'      => '$dbname', 
@@ -50,7 +50,7 @@ try{
         ],
     ],
 ];";
-$sql="DROP TABLE IF EXISTS `cross`;
+    $sql = "DROP TABLE IF EXISTS `cross`;
 CREATE TABLE `cross`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `openid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
@@ -64,21 +64,22 @@ CREATE TABLE `cross`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 SET FOREIGN_KEY_CHECKS = 1;";
-    try{
-$db=new PDO("mysql:host=" . $host.":" .$port. ";dbname=" . $dbname, $dbuser, $dbpass);
-if($db->query($sql)){
-    file_put_contents(__DIR__.'/config.php',$config);
-    file_put_contents(__DIR__.'/install.lock','');
-    die("1");
-}
-}catch(PDOException $e){
-    die('数据库连接失败:' ."mysql:host=" . $host.":" .$port. ";dbname=" . $dbname. $dbuser.$dbpass. $e->getMessage());
-}
+    try {
+        $db = new PDO("mysql:host=" . $host . ":" . $port . ";dbname=" . $dbname, $dbuser, $dbpass);
+        if ($db->query($sql)) {
+            file_put_contents(__DIR__ . '/config.php', $config);
+            file_put_contents(__DIR__ . '/install.lock', '');
+            die("1");
+        }
+    } catch (PDOException $e) {
+        die('数据库连接失败:' . "mysql:host=" . $host . ":" . $port . ";dbname=" . $dbname . $dbuser . $dbpass . $e->getMessage());
+    }
     die("参数错误");
 }
 ?>
 
 <html lang="zh-cmn-Hans">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0,viewport-fit=cover">
@@ -86,6 +87,7 @@ if($db->query($sql)){
     <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.1.3/weui.css">
     <script src="./zepto.min.js"></script>
 </head>
+
 <body ontouchstart="">
     <div class="page">
         <form class="weui-form" id="form">
@@ -113,7 +115,7 @@ if($db->query($sql)){
                                 <label class="weui-label">端口</label>
                             </div>
                             <div class="weui-cell__bd">
-                                <input id="js_input" name="port"  class="weui-input" value="3306">
+                                <input id="js_input" name="port" class="weui-input" value="3306">
                             </div>
                         </div>
                         <div class="weui-cell">
@@ -211,16 +213,18 @@ if($db->query($sql)){
             var $msg = $('#msg');
             $('#bind').on('click', function() {
                 $('#bind').addClass('weui-btn_loading');
-                $.post('<?php echo  ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';echo $_SERVER["HTTP_HOST"].dirname($_SERVER['SCRIPT_NAME']);?>/install.php', $('#form').serialize(), function(response) {
+                $.post('<?php echo ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
+                        echo $_SERVER["HTTP_HOST"] . dirname($_SERVER['SCRIPT_NAME']); ?>/install.php', $('#form').serialize(), function(response) {
                     if (response == '1') {
                         $msg.html('安装成功');
-                    }else {
+                    } else {
                         $msg.html(response);
                     }
                     $Dialog.fadeIn(200);
                     $('#bind').removeClass('weui-btn_loading');
                 })
             });
+
             function onBridgeReady() {
                 WeixinJSBridge.call('hideOptionMenu');
             }
@@ -238,4 +242,5 @@ if($db->query($sql)){
         });
     </script>
 </body>
+
 </html>
