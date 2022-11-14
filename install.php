@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $token = $_POST['token'];
     $aes_key = $_POST['aes_key'];
     $url_dir = $_POST['url_dir'];
+    $amapSecret = $_POST['amapSecret'];
     $config = "<?php
 \$mysql_conf = array(
     'host'    => '$host:$port', 
@@ -25,7 +26,7 @@ try{
 }catch(PDOException \$e){
     die('数据库连接失败:' . \$e->getMessage());
 }
-
+\$amapSecret = $amapSecret;
 \$config = [
     'app_id' => '$app_id',
     'secret' => '$secret',
@@ -174,6 +175,14 @@ SET FOREIGN_KEY_CHECKS = 1;";
                                 <input id="js_input" name="aes_key" class="weui-input" placeholder="公众号aes_key" value="">
                             </div>
                         </div>
+                        <div class="weui-cell">
+                            <div class="weui-cell__hd">
+                                <label class="weui-label">aes_key</label>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input id="js_input" name="amapSecret" class="weui-input" placeholder="高德地图apiKey" value="">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -185,10 +194,10 @@ SET FOREIGN_KEY_CHECKS = 1;";
             <div class="weui-form__extra-area">
                 <div class="weui-footer">
                     <p class="weui-footer__links">
-                        <a href="https://ifking.cn" class="weui-footer__link">我若为王</a>
+                        <a href="https://www.ifking.cn" class="weui-footer__link">我若为王</a>
                     </p>
                     <p class="weui-footer__text">
-                        Copyright © 2008-2019 iLay
+                        Copyright © 2022 iLay
                     </p>
                 </div>
             </div>

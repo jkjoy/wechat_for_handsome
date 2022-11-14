@@ -207,7 +207,8 @@ class CrossHandler implements EventHandlerInterface
                                     $type = $arr['msg_type'];
                                     switch ($message['MsgType']) {
                                         case "location":
-                                            $content = $message['Location_X'] . "#" . $message['Location_Y'] . "#" . $message['Label'] . "#http://restapi.amap.com/v3/staticmap?location=" . $message['Location_Y'] . "," . $message['Location_X'] . "&zoom=10&size=750*300&markers=mid,,A:" . $message['Location_Y'] . "," . $message['Location_X'] . "&key=2a5048a9ad453654e037b6a68abd13c4";
+                                            global $amapSecret;
+                                            $content = $message['Location_X'] . "#" . $message['Location_Y'] . "#" . $message['Label'] . "#http://restapi.amap.com/v3/staticmap?location=" . $message['Location_Y'] . "," . $message['Location_X'] . "&zoom=10&size=750*300&markers=mid,,A:" . $message['Location_Y'] . "," . $message['Location_X'] . "&key=" . $amapSecret;
                                             $msg_type = "location";
                                             if ($type == 'mixed_talk' || $type == 'mixed_post') {
                                                 $content = $buffer . $msg_type . "->" . $content . "@";
