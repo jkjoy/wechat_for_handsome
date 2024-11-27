@@ -1,14 +1,16 @@
 <?php
 include('config.php');
+
 class Db
 {
     private $db;
 
-    function  __construct()
+    function __construct()
     {
-        global $mysql_conf;
-        $this->db = new PDO('mysql:host=' . $mysql_conf['host'] . ';dbname=' . $mysql_conf['db'], $mysql_conf['db_user'], $mysql_conf['db_pwd']);
+        global $sqlite_conf;
+        $this->db = new PDO('sqlite:' . __DIR__ . '/' . $sqlite_conf['db']);
     }
+
     public function query($sql)
     {
         return $this->db->query($sql);

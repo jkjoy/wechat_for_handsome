@@ -12,14 +12,13 @@ if ($_POST['openid'] != null) :
     $url = $_POST['url'];
     $cid = $_POST['cid'];
     $mid = $_POST['mid'];
-    $mid = $_POST['mid'];
     $timecode = $_POST['timecode'];
     if (!isset($id)) {
-        if ($db->query("INSERT INTO `cross` (openid, url,timecode,cid,mid) VALUES ('{$openid}', '{$url}','{$timecode}', '{$cid}','{$mid}')")) {
+        if ($db->query("INSERT INTO `cross` (openid, url, timecode, cid, mid) VALUES ('{$openid}', '{$url}', '{$timecode}', '{$cid}', '{$mid}')")) {
             die('1');
         }
     } else {
-        if ($db->query("update `cross` set url='$url', timecode='$timecode', cid='$cid', mid='$mid' where openid='$openid'")) {
+        if ($db->query("UPDATE `cross` SET url='$url', timecode='$timecode', cid='$cid', mid='$mid' WHERE openid='$openid'")) {
             die('2');
         }
     }

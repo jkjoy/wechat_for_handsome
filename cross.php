@@ -43,6 +43,7 @@ function push($content, $msg_type, $url, $timecode, $cid, $mid)
     $res = request_post($url, $desp);
     return $res;
 }
+
 function curl($url)
 {
     $curl = curl_init();
@@ -56,6 +57,7 @@ function curl($url)
     curl_close($curl);
     return $result;
 }
+
 function update()
 {
     $shasum = curl('https://raw.githubusercontent.com/iLay1678/wechat_for_handsome/master/shasum.txt');
@@ -89,6 +91,7 @@ function update()
     return $result;
     //die();
 }
+
 class CrossHandler implements EventHandlerInterface
 {
     public function handle($message = null)
@@ -157,23 +160,23 @@ class CrossHandler implements EventHandlerInterface
                             switch ($message['Content']) {
                                 case '发文章':
                                     $msg_type = 'mixed_post';
-                                    $db->query("update `cross` set msg_type='$msg_type',content='' where openid='$openid'");
+                                    $db->query("UPDATE `cross` SET msg_type='$msg_type', content='' WHERE openid='$openid'");
                                     return "开启博文构造模式，请继续发送消息，下面的消息最后将组成一篇完整的文章发送到博客，发送『结束』结束本次发送，发送『取消』取消本次发送~";
                                     break;
                                 case "取消":
-                                    $db->query("update `cross` set msg_type='',content='' where openid='$openid'");
+                                    $db->query("UPDATE `cross` SET msg_type='', content='' WHERE openid='$openid'");
                                     return "已取消发送";
                                     break;
                                 case "开始":
                                     $msg_type = 'mixed_talk';
-                                    $db->query("update `cross` set msg_type='$msg_type',content='' where openid='$openid'");
+                                    $db->query("UPDATE `cross` SET msg_type='$msg_type', content='' WHERE openid='$openid'");
                                     return "当前处于混合消息模式，请继续，发送『结束』结束本次发送，发送『取消』取消本次发送~";
                                     break;
                                 case "结束":
                                     $arr = $db->query("SELECT * FROM `cross` WHERE openid='{$openid}'")->fetch();
                                     $str = $arr['content'];
                                     if ($str == null) {
-                                        $db->query("update `cross` set msg_type='',content='' where openid='$openid'");
+                                        $db->query("UPDATE `cross` SET msg_type='', content='' WHERE openid='$openid'");
                                         return "已结束，本次操作未发送任何信息~";
                                         exit();
                                     }
@@ -189,7 +192,7 @@ class CrossHandler implements EventHandlerInterface
                                     }
                                     $content = array('results' => $result);
                                     $status = push(json_encode($content), $msg_type, $url, $timecode, $cid, $mid);
-                                    $db->query("update `cross` set msg_type='',content='' where openid='$openid'");
+                                    $db->query("UPDATE `cross` SET msg_type='', content='' WHERE openid='$openid'");
                                     switch ($status) {
                                         case "1":
                                             return "biubiubiu~发送成功";
@@ -213,7 +216,7 @@ class CrossHandler implements EventHandlerInterface
                                             if ($type == 'mixed_talk' || $type == 'mixed_post') {
                                                 $content = $buffer . $msg_type . "->" . $content . "@";
                                             }
-                                            $db->query("update `cross` set content='$content' where openid='$openid'");
+                                            $db->query("UPDATE `cross` SET content='$content' WHERE openid='$openid'");
                                             break;
                                         case "image":
                                             $content = $message['PicUrl'];
@@ -221,7 +224,7 @@ class CrossHandler implements EventHandlerInterface
                                             if ($type == 'mixed_talk' || $type == 'mixed_post') {
                                                 $content = $buffer . $msg_type . "->" . $content . "@";
                                             }
-                                            $db->query("update `cross` set content='$content' where openid='$openid'");
+                                            $db->query("UPDATE `cross` SET content='$content' WHERE openid='$openid'");
                                             break;
                                         case "link":
                                             $content = $message['Title'] . "#" . $message['Description'] . "#" . $message['Url'];
@@ -229,7 +232,7 @@ class CrossHandler implements EventHandlerInterface
                                             if ($type == 'mixed_talk' || $type == 'mixed_post') {
                                                 $content = $buffer . $msg_type . "->" . $content . "@";
                                             }
-                                            $db->query("update `cross` set content='$content' where openid='$openid'");
+                                            $db->query("UPDATE `cross` SET content='$content' WHERE openid='$openid'");
                                             break;
                                         case "text":
                                             if (substr($message['Content'], 0, 1) == "#") {
@@ -241,7 +244,7 @@ class CrossHandler implements EventHandlerInterface
                                             if ($type == 'mixed_talk' || $type == 'mixed_post') {
                                                 $content = $buffer . $msg_type . "->" . $content . "@";
                                             }
-                                            $db->query("update `cross` set content='$content' where openid='$openid'");
+                                            $db->query("UPDATE `cross` SET content='$content' WHERE openid='$openid'");
                                             break;
                                         default:
                                             return "不支持的消息类型";
@@ -257,7 +260,7 @@ class CrossHandler implements EventHandlerInterface
                                             break;
                                         default:
                                             $status = push($content, $msg_type, $url, $timecode, $cid, $mid);
-                                            $db->query("update `cross` set msg_type='',content='' where openid='$openid'");
+                                            $db->query("UPDATE `cross` SET msg_type='', content='' WHERE openid='$openid'");
                                             switch ($status) {
                                                 case "1":
                                                     return "biubiubiu~发送成功";

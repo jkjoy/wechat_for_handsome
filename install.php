@@ -3,10 +3,6 @@ if (file_exists(__DIR__ . '/install.lock')) {
     die("已经安装过了，如要重新安装请删除install.lock");
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $host = $_POST['host'];
-    $port = $_POST['port'];
-    $dbuser = $_POST['dbuser'];
-    $dbpass = $_POST['dbpass'];
     $dbname = $_POST['dbname'];
     $app_id = $_POST['app_id'];
     $secret = $_POST['secret'];
@@ -15,14 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $url_dir = $_POST['url_dir'];
     $amapSecret = $_POST['amapSecret'];
     $config = "<?php
-\$mysql_conf = array(
-    'host'    => '$host:$port', 
+\$sqlite_conf = array(
     'db'      => '$dbname', 
-    'db_user' => '$dbuser', 
-    'db_pwd'  => '$dbpass', 
     );
 try{
-\$db=new PDO('mysql:host=' . \$mysql_conf['host'] . ';dbname=' . \$mysql_conf['db'], \$mysql_conf['db_user'], \$mysql_conf['db_pwd']);
+\$db=new PDO('sqlite:' . __DIR__ . '/' . \$sqlite_conf['db']);
 }catch(PDOException \$e){
     die('数据库连接失败:' . \$e->getMessage());
 }
@@ -53,27 +46,24 @@ try{
 ];";
     $sql = "DROP TABLE IF EXISTS `cross`;
 CREATE TABLE `cross`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `openid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
-  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `timecode` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `cid` int(11) NULL DEFAULT NULL,
-  `mid` int(11) NULL DEFAULT NULL,
-  `msg_type` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
-SET FOREIGN_KEY_CHECKS = 1;";
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `openid` TEXT NOT NULL DEFAULT '',
+  `url` TEXT NULL DEFAULT NULL,
+  `timecode` TEXT NULL DEFAULT NULL,
+  `cid` INTEGER NULL DEFAULT NULL,
+  `mid` INTEGER NULL DEFAULT NULL,
+  `msg_type` TEXT NULL DEFAULT NULL,
+  `content` TEXT NULL
+);";
     try {
-        $db = new PDO("mysql:host=" . $host . ":" . $port . ";dbname=" . $dbname, $dbuser, $dbpass);
-        if ($db->query($sql)) {
+        $db = new PDO("sqlite:" . __DIR__ . "/" . $dbname);
+        if ($db->exec($sql)) {
             file_put_contents(__DIR__ . '/config.php', $config);
             file_put_contents(__DIR__ . '/install.lock', '');
             die("1");
         }
     } catch (PDOException $e) {
-        die('数据库连接失败:' . "mysql:host=" . $host . ":" . $port . ";dbname=" . $dbname . $dbuser . $dbpass . $e->getMessage());
+        die('数据库连接失败:' . $e->getMessage());
     }
     die("参数错误");
 }
@@ -105,42 +95,10 @@ SET FOREIGN_KEY_CHECKS = 1;";
 
                         <div class="weui-cell">
                             <div class="weui-cell__hd">
-                                <label class="weui-label">数据库地址</label>
+                                <label class="weui-label">数据库文件名</label>
                             </div>
                             <div class="weui-cell__bd">
-                                <input id="js_input" name="host" class="weui-input" placeholder="数据库地址" value="localhost">
-                            </div>
-                        </div>
-                        <div class="weui-cell">
-                            <div class="weui-cell__hd">
-                                <label class="weui-label">端口</label>
-                            </div>
-                            <div class="weui-cell__bd">
-                                <input id="js_input" name="port" class="weui-input" value="3306">
-                            </div>
-                        </div>
-                        <div class="weui-cell">
-                            <div class="weui-cell__hd">
-                                <label class="weui-label">数据库用户名</label>
-                            </div>
-                            <div class="weui-cell__bd">
-                                <input id="js_input" name="dbuser" class="weui-input" placeholder="数据库用户名" value="">
-                            </div>
-                        </div>
-                        <div class="weui-cell">
-                            <div class="weui-cell__hd">
-                                <label class="weui-label">数据库密码</label>
-                            </div>
-                            <div class="weui-cell__bd">
-                                <input id="js_input" name="dbpass" class="weui-input" type="dbpass" placeholder="数据库密码" value="">
-                            </div>
-                        </div>
-                        <div class="weui-cell">
-                            <div class="weui-cell__hd">
-                                <label class="weui-label">数据库名</label>
-                            </div>
-                            <div class="weui-cell__bd">
-                                <input id="js_input" name="dbname" class="weui-input" placeholder="数据库名" type="" value="">
+                                <input id="js_input" name="dbname" class="weui-input" placeholder="数据库文件名" value="database.sqlite">
                             </div>
                         </div>
                         <div class="weui-cell">
@@ -177,7 +135,7 @@ SET FOREIGN_KEY_CHECKS = 1;";
                         </div>
                         <div class="weui-cell">
                             <div class="weui-cell__hd">
-                                <label class="weui-label">aes_key</label>
+                                <label class="weui-label">高德地图apiKey</label>
                             </div>
                             <div class="weui-cell__bd">
                                 <input id="js_input" name="amapSecret" class="weui-input" placeholder="高德地图apiKey" value="">
